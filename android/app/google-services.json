@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "806635802328",
+    "project_id": "auto-flashcards-ai",
+    "storage_bucket": "auto-flashcards-ai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806635802328:android:cb815f7218bb8be9f051ad",
+        "android_client_info": {
+          "package_name": "com.autoFlashcards.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoHkMqQcpPN36e1bXzlN6SdpIoJx7TGRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806635802328:android:d1bd3bf8b20062b4f051ad",
+        "android_client_info": {
+          "package_name": "com.auto_flashcards.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoHkMqQcpPN36e1bXzlN6SdpIoJx7TGRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

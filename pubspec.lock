@@ -225,6 +225,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.1"
+  firebase_core:
+    dependency: "direct main"
+    description:
+      name: firebase_core
+      sha256: "67bf0d5fd78f12f51c6b54a72f6141314136a1a90e98b1b7c45e7fac883254ed"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.27.1"
+  firebase_core_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_core_platform_interface
+      sha256: c437ae5d17e6b5cc7981cf6fd458a5db4d12979905f9aafd1fea930428a9fe63
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  firebase_core_web:
+    dependency: transitive
+    description:
+      name: firebase_core_web
+      sha256: "5377eaac3b9fe8aaf22638d87f92b62784f23572e132dfc029195e84d6cb37de"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.12.0"
   fixnum:
     dependency: transitive
     description:
@@ -493,6 +517,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  logger:
+    dependency: transitive
+    description:
+      name: logger
+      sha256: b3ff55aeb08d9d8901b767650285872cb1bb8f508373b3e348d60268b0c7f770
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   matcher:
     dependency: transitive
     description:
@@ -557,6 +589,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.0"
+  package_rename:
+    dependency: "direct dev"
+    description:
+      name: package_rename
+      sha256: ea5d3da076a6fcb82c1fcbb7ea9d01f278e2a26f145b753362ec9c093e1e5e59
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.3"
   path:
     dependency: "direct main"
     description:
@@ -846,10 +886,10 @@ packages:
     dependency: transitive
     description:
       name: web
-      sha256: "1d9158c616048c38f712a6646e317a3426da10e884447626167240d45209cbad"
+      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.0"
+    version: "0.5.1"
   win32:
     dependency: transitive
     description:
@@ -874,6 +914,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  yaml:
+    dependency: transitive
+    description:
+      name: yaml
+      sha256: "75769501ea3489fca56601ff33454fe45507ea3bfb014161abc3b43ae25989d5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.2"
 sdks:
   dart: ">=3.3.0 <4.0.0"
   flutter: ">=3.19.2"
