@@ -8,12 +8,6 @@ class HomeStateNewDocumentUploaded extends BaseState {
   const HomeStateNewDocumentUploaded() : super(const []);
 }
 
-class HomeStateUploadDocumentLoading extends BaseState {
-  final String documentPath;
-
-  HomeStateUploadDocumentLoading(this.documentPath) : super([documentPath]);
-}
-
 class HomeStateUploadDocumentError extends BaseState {
   final String errorMessage;
 

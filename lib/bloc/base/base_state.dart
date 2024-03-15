@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
-abstract class BaseState extends Equatable{
+abstract class BaseState extends Equatable {
   final List<Object?> properties;
   final Key? key;
+
   const BaseState(this.properties, [this.key]);
 
   @override
@@ -39,27 +40,27 @@ class DialogLongErrorState extends CommonState {
 
   DialogLongErrorState(
       {this.errorMessage,
-        this.title,
-        this.positiveButtonLabel,
-        this.closeAfterTap = true,
-        this.hideCancelIcon = true,
-        required this.onPositiveTap})
+      this.title,
+      this.positiveButtonLabel,
+      this.closeAfterTap = true,
+      this.hideCancelIcon = true,
+      required this.onPositiveTap})
       : super([
-    errorMessage,
-    title,
-    positiveButtonLabel,
-    closeAfterTap,
-    hideCancelIcon,
-    onPositiveTap
-  ]);
+          errorMessage,
+          title,
+          positiveButtonLabel,
+          closeAfterTap,
+          hideCancelIcon,
+          onPositiveTap
+        ]);
 }
 
 class DialogSessionExpired extends DialogLongErrorState {
   DialogSessionExpired(
       {required String super.errorMessage,
-        required String super.title,
-        required String super.positiveButtonLabel,
-        required super.onPositiveTap});
+      required String super.title,
+      required String super.positiveButtonLabel,
+      required super.onPositiveTap});
 }
 
 class ScreenErrorState extends BaseState {
@@ -76,5 +77,13 @@ class SendToLoginState extends CommonState {
 
 class RequestPermissionState extends CommonState {
   final Function(bool) callback;
+
   RequestPermissionState(this.callback) : super([callback]);
+}
+
+class DisplayFullScreenLoadingDialogState extends CommonState {
+  final Object nextEventObject;
+
+  DisplayFullScreenLoadingDialogState(this.nextEventObject)
+      : super([nextEventObject]);
 }

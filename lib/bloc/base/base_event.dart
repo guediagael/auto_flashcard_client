@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class BaseEvent extends Equatable {
@@ -52,4 +53,15 @@ class FilesPermissionRequestEvent extends CommonEvent {
   final Function(bool) callback;
 
   FilesPermissionRequestEvent(this.callback) : super([callback]);
+}
+
+class HttpRequestErrorEvent extends CommonEvent {
+  final DioException dioException;
+
+  HttpRequestErrorEvent({required this.dioException}) : super([dioException]);
+}
+
+class ShowFullLoadingScreenEvent extends CommonEvent {
+  final Object nextEventObject;
+   ShowFullLoadingScreenEvent(this.nextEventObject) : super( []);
 }

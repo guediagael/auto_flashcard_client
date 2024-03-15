@@ -12,7 +12,7 @@ abstract class BaseBloc extends Bloc<BaseEvent, BaseState> {
   final DataRepository dataRepository;
   final Type _initialStateType;
   var closed = false;
-
+  Type? _prevStateType;
 
   BaseBloc({required BaseState initialState, required this.dataRepository})
       : _initialStateType = initialState.runtimeType,
@@ -23,9 +23,18 @@ abstract class BaseBloc extends Bloc<BaseEvent, BaseState> {
     on<SendToLoginEvent>(_onSendToLoginEvent);
     on<ShowErrorScreenEvent>(_onShowErrorScreenEvent);
     on<FilesPermissionRequestEvent>(_onFilesPermissionRequestEvent);
+    on<ShowFullLoadingScreenEvent>(_onShowFullLoadingScreenEvent);
+  }
+
+  @override
+  void onChange(Change<BaseState> change) {
+    super.onChange(change);
+    _prevStateType = change.currentState.runtimeType;
   }
 
   Type get initialStateType => _initialStateType;
+
+  Type? get previousStateType => _prevStateType;
 
   void _commonEvent(CommonEvent event, Emitter<BaseState> baseEventEmitter) {
     //TODO:
@@ -81,8 +90,12 @@ abstract class BaseBloc extends Bloc<BaseEvent, BaseState> {
   String getTag() => toString();
 
   void networkErrorHandler(DioException error, ErrorViewType errorViewType) {
-    debugPrint("dio error: ${error.message}");
-    debugPrint("dio error resp code: ${error.response?.statusCode}");
+    debugPrint("BaseBloc::$runtimeType network error: ${error.message}");
+    debugPrint(
+        "BaseBloc::$runtimeType network error resp code: ${error.response?.statusCode}");
+    debugPrintStack(
+        stackTrace: error.stackTrace,
+        label: "BaseBloc$runtimeType::networkErrorHandler::${error.type}");
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
         error.type == DioExceptionType.sendTimeout) {
@@ -143,6 +156,11 @@ abstract class BaseBloc extends Bloc<BaseEvent, BaseState> {
   FutureOr<void> _onFilesPermissionRequestEvent(
       FilesPermissionRequestEvent event, Emitter<BaseState> emitter) {
     emitter(RequestPermissionState(event.callback));
+  }
+
+  FutureOr<void> _onShowFullLoadingScreenEvent(
+      ShowFullLoadingScreenEvent event, Emitter<BaseState> emit) {
+    emit(DisplayFullScreenLoadingDialogState(event.nextEventObject));
   }
 }
 

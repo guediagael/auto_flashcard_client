@@ -2,10 +2,10 @@ import 'package:client/data/data_repository.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../bloc/base/base_bloc_builder.dart';
 import '../bloc/base/base_bloc_listener.dart';
+import '../bloc/base/base_state.dart';
 import '../bloc/home/home_bloc.dart';
 import '../bloc/home/home_event.dart';
 import '../bloc/home/home_state.dart';
@@ -41,19 +41,16 @@ class HomeScreen extends StatelessWidget {
         bloc: homeBloc,
         messenger: Messenger(context),
         listener: (listenerCtx, listenerState) {
-          if (listenerState is HomeStateUploadDocumentLoading) {
+          if (listenerState is DisplayFullScreenLoadingDialogState) {
             homeBloc.add(HomeEventUploadDocument(
-                documentPath: listenerState.documentPath));
+                documentPath: (listenerState.nextEventObject as String)));
+          }else if (listenerState is HomeStateUploadDocumentError){
+
           }
         },
         child: BaseBlocBuilder(
           bloc: homeBloc,
           builder: (builderCtx, builderState) {
-            if (builderState is HomeStateUploadDocumentLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
             return (currentScreen == 0)
                 ? FlashcardScreen(
                     key: UniqueKey(),

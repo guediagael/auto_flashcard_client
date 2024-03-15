@@ -6,6 +6,8 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../core/errors/exceptions.dart';
+
 class ApiClient {
   late final Dio vertexClient;
   late final Dio pdfLoaderClient;
@@ -65,4 +67,5 @@ class ApiClient {
 
     pdfLoaderClient.interceptors.add(DioCacheInterceptor(options: options));
   }
+
 }

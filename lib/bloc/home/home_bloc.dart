@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/model/extracted_pdf.dart';
@@ -18,23 +19,28 @@ class HomeBloc extends BaseBloc {
 
   FutureOr<void> _uploadDocument(
       HomeEventUploadDocument event, Emitter<BaseState> emit) async {
-    List<ExtractedPdf> documents =
-        await dataRepository.apiImpl.loadPdf(File(event.documentPath));
-
-    if (documents.isNotEmpty) {
-      for (var doc in documents) {
-        final docName= event.documentPath.split('/').last.split('.')[0];
-        doc.name = docName;
-        await dataRepository.docDatabase.insertDocument(doc);
+    try {
+      List<ExtractedPdf> documents =
+          await dataRepository.apiImpl.loadPdf(File(event.documentPath));
+      if (documents.isNotEmpty) {
+        for (var doc in documents) {
+          final docName = event.documentPath.split('/').last.split('.')[0];
+          doc.name = docName;
+          await dataRepository.docDatabase.insertDocument(doc);
+        }
+        emit(const HomeStateNewDocumentUploaded());
+      } else {
+        emit(HomeStateUploadDocumentError(
+            errorMessage: "No documents uploaded"));
       }
-      emit(const HomeStateNewDocumentUploaded());
-    } else {
+    } on DioException catch (e) {
       emit(HomeStateUploadDocumentError(errorMessage: "No documents uploaded"));
+      errorHandler(e, ErrorViewType.dialog);
     }
   }
 
   FutureOr<void> _triggerDocumentUpLoading(
       HomeEventTriggerUploadLoading event, Emitter<BaseState> emit) {
-    emit(HomeStateUploadDocumentLoading(event.documentPath));
+    emit(DisplayFullScreenLoadingDialogState(event.documentPath));
   }
 }
