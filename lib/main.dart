@@ -13,8 +13,6 @@ import 'package:provider/provider.dart';
 
 import 'data/api/api_impl.dart';
 
-var globalMessengerKey = GlobalKey<ScaffoldState>();
-var navigatorState = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +52,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      supportedLocales: const [Locale('en', '')],
     );
   }
 }

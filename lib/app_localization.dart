@@ -10,9 +10,9 @@ class AppLocalization {
 
   static final Map<String, Map<String, String>> _localizedValues = {"en": enUs};
 
-  static AppLocalization of() {
+  static AppLocalization of(BuildContext context) {
     return Localizations.of<AppLocalization>(
-        navigatorState.currentContext!, AppLocalization)!;
+        context, AppLocalization)!;
   }
 
   static List<String> languages() => _localizedValues.keys.toList();
@@ -42,5 +42,5 @@ class AppLocalizationDelegate
 }
 
 extension LocalizationExtension on String {
-  String get tr => AppLocalization.of().getString(this);
+  String  tr(BuildContext context) => AppLocalization.of(context).getString(this);
 }

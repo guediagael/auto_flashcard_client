@@ -1,4 +1,5 @@
 import 'package:client/screens/home_screen.dart';
+import 'package:client/screens/login_form_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -9,7 +10,8 @@ class SplashScreen extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Center(
             child: Text("Splash Screen"),
@@ -19,7 +21,8 @@ class SplashScreen extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (ctx) => HomeScreen.buildHomeScreen()));
+                        builder: (ctx) =>
+                            LoginFormScreen.buildLoginFormScreen()));
               },
               child: const Text('Go to home'))
         ],

@@ -13,3 +13,4 @@ const Map<int, Map<String, String>> errorCodes = {
     "fr": "Un compte associé à ce numéro existe déjà."
   }
 };
+
