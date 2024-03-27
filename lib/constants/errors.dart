@@ -11,6 +11,8 @@ const Map<int, Map<String, String>> errorCodes = {
   4091: {
     "en": "An account already exists with the specified phone number",
     "fr": "Un compte associé à ce numéro existe déjà."
-  }
+  },
+  5001:{"en":"This field is required"},
+  5002: {"en": "Password and password confirmation must match"}
 };
 

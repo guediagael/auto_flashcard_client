@@ -1,5 +1,6 @@
 import 'package:client/screens/home_screen.dart';
 import 'package:client/screens/login_form_screen.dart';
+import 'package:client/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -21,8 +22,8 @@ class SplashScreen extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (ctx) =>
-                            LoginFormScreen.buildLoginFormScreen()));
+                        builder: (ctx) => RegistrationFormScreen
+                            .buildRegistrationFormScreen()));
               },
               child: const Text('Go to home'))
         ],

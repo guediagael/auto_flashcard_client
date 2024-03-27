@@ -5,20 +5,11 @@ class LoginStateInitial extends BaseState {
 }
 
 class LoginStateLoginNotFound extends BaseState {
-  final String email;
-  final String password;
-
-  LoginStateLoginNotFound({required this.email, required this.password})
-      : super([email, password]);
+  const LoginStateLoginNotFound() : super(const []);
 }
 
 class LoginStateLoadingSendingCredentials extends BaseState {
-  final String email;
-  final String password;
-
-  LoginStateLoadingSendingCredentials(
-      {required this.email, required this.password})
-      : super([email, password]);
+  const LoginStateLoadingSendingCredentials() : super(const []);
 }
 
 class LoginStateLoadingSendingGoogleCredentials extends BaseState {
@@ -37,15 +28,9 @@ class LoginStateGoogleCredentialsError extends BaseState {
 }
 
 class LoginStateFormValidityCheck extends BaseState {
-  final String? email;
-  final String? password;
   final String? emailError;
   final String? passwordError;
 
-  LoginStateFormValidityCheck(
-      {required this.email,
-      required this.password,
-      this.emailError,
-      this.passwordError})
-      : super([email, password, passwordError, emailError]);
+  LoginStateFormValidityCheck({this.emailError, this.passwordError})
+      : super([passwordError, emailError]);
 }

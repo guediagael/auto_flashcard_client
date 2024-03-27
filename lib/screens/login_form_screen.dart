@@ -1,4 +1,6 @@
 import 'package:client/app_localization.dart';
+import 'package:client/bloc/registration/registration_bloc.dart';
+import 'package:client/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,6 +12,7 @@ import '../bloc/login/login_state.dart';
 import '../constants/assets.dart';
 import '../core/errors/exceptions.dart';
 import '../data/data_repository.dart';
+import '../data/shared_prefs/data_preferences.dart';
 import '../localization/en_us.dart';
 import '../utils/messenger.dart';
 import '../utils/screen_utils.dart';
@@ -17,12 +20,26 @@ import '../widgets/custom_elevated_button.dart';
 import 'home_screen.dart';
 
 class LoginFormScreen extends StatefulWidget {
-  const LoginFormScreen({super.key});
+  final String? initialEmail, initialPassword;
+  final LoginType? initialLoginType;
+
+  const LoginFormScreen(
+      {super.key,
+      this.initialEmail,
+      this.initialPassword,
+      this.initialLoginType})
+      : assert(((initialEmail == null) &&
+                (initialPassword == null) &&
+                (initialLoginType == null)) ||
+            ((initialEmail != null) &&
+                (initialPassword != null) &&
+                (initialLoginType != null)));
 
   @override
   State<LoginFormScreen> createState() => _LoginFormState();
 
-  static Widget buildLoginFormScreen({Key? key}) {
+  static Widget buildLoginFormScreen(
+      {Key? key, String? email, String? token, LoginType? loginType}) {
     return BlocProvider(
       create: (ctx) => LoginBloc(dataRepository: ctx.read<DataRepository>()),
       child: LoginFormScreen(
@@ -33,16 +50,34 @@ class LoginFormScreen extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginFormScreen> {
-  final _formKey = GlobalKey<FormState>(); // Key for form validation
-  final _emailController =
-      TextEditingController(); // Controller for email field
-  final _passwordController =
-      TextEditingController(); // Controller for password field
+  late final GlobalKey<FormState> _formKey; // Key for form validation
+  late final TextEditingController _emailController,
+      _passwordController; // Controller for password field
+
+  @override
+  void initState() {
+    _formKey = GlobalKey<FormState>();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    if (widget.initialEmail != null) {
+      _emailController.text = widget.initialEmail!;
+      _passwordController.text = widget.initialPassword!;
+      if (widget.initialLoginType == LoginType.email) {
+        context.read<RegistrationBloc>().add(LoginEventSendCredentials(
+            email: widget.initialEmail!, password: widget.initialPassword!));
+      } else {
+        context.read<RegistrationBloc>().add(LoginEventGoogleSignInSuccess(
+            email: widget.initialEmail!, token: widget.initialPassword!));
+      }
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     ScreenUtils().init(context);
-    String? emailError, passwordError, email, password;
+    String? emailError, passwordError;
     bool sendingCredentials = false;
     final loginBloc = context.read<LoginBloc>();
 
@@ -52,24 +87,20 @@ class _LoginFormState extends State<LoginFormScreen> {
       listener: (listenerCtx, listenerState) {
         emailError = null;
         passwordError = null;
-        email = null;
-        password = null;
         sendingCredentials = false;
         if (listenerState is LoginStateLoginNotFound) {
-          email = listenerState.email;
-          password = listenerState.password;
           ScaffoldMessenger.of(listenerCtx).showSnackBar(
               SnackBar(content: Text(credentialsNotFound.tr(listenerCtx))));
         } else if (listenerState is LoginStateLoadingSendingCredentials) {
           sendingCredentials = true;
-          email = listenerState.email;
-          password = listenerState.password;
+
           loginBloc.add(LoginEventSendCredentials(
-              email: listenerState.email, password: listenerState.password));
+              email: _emailController.text,
+              password: _passwordController.text));
         } else if (listenerState is LoginStateLoadingSendingGoogleCredentials) {
           sendingCredentials = true;
           loginBloc.add(LoginEventTriggerGoogleSignInFailure(
-              errorMessage: "Invalid credentials"));
+              errorMessage: "Invalid credentials")); //TODO: intl
         } else if (listenerState is LoginStateLoggedIn) {
           Navigator.of(listenerCtx).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => HomeScreen.buildHomeScreen()),
@@ -80,8 +111,6 @@ class _LoginFormState extends State<LoginFormScreen> {
         } else if (listenerState is LoginStateFormValidityCheck) {
           emailError = listenerState.emailError;
           passwordError = listenerState.passwordError;
-          email = listenerState.email;
-          password = listenerState.password;
         }
       },
       child: BaseBlocBuilder(
@@ -230,7 +259,15 @@ class _LoginFormState extends State<LoginFormScreen> {
                                 children: [
                                   Text(noAccountPrompt.tr(context)),
                                   InkWell(
-                                    onTap: sendingCredentials ? null : () {},
+                                    onTap: sendingCredentials
+                                        ? null
+                                        : () {
+                                            Navigator.of(context).pushReplacement(
+                                                MaterialPageRoute(
+                                                    builder: (ctx) =>
+                                                        RegistrationFormScreen
+                                                            .buildRegistrationFormScreen()));
+                                          },
                                     child: Text(
                                       signUpText.tr(context),
                                       style:

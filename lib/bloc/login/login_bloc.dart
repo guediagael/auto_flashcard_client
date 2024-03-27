@@ -29,15 +29,13 @@ class LoginBloc extends BaseBloc {
 
   FutureOr<void> _onLoginEventTriggerCredentials(
       LoginEventTriggerCredentialsLogin event, Emitter<BaseState> emit) async {
-    emit(LoginStateLoadingSendingCredentials(
-        email: event.email, password: event.password));
+    emit(LoginStateLoadingSendingCredentials());
   }
 
   FutureOr<void> _onLoginEventSendCredentials(
       LoginEventSendCredentials event, Emitter<BaseState> emit) async {
     await Future.delayed(Duration(seconds: 2), () {
-      emit(LoginStateLoginNotFound(
-          email: event.email, password: event.password));
+      emit(LoginStateLoginNotFound());
     });
     // _saveCredentials(null, LoginType.email);
   }
@@ -63,10 +61,10 @@ class LoginBloc extends BaseBloc {
     String? email = event.email;
     String? password = event.password;
     if (event.email != null &&
-        event.email!.trim() .length > 6 &&
+        event.email!.trim().length > 6 &&
         event.password != null &&
-        event.password!.isNotEmpty) {
-    }
-    emit(LoginStateFormValidityCheck(email: email, password: password));
+        event.password!.isNotEmpty) {}
+    emit(LoginStateFormValidityCheck(
+        emailError: email, passwordError: password));
   }
 }
