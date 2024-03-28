@@ -57,7 +57,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
     ScreenUtils().init(context);
     String? nameError, emailError, passwordError, passwordConfirmError;
     bool sendingCredentials = false;
-    bool autoValidate = false;
     final registrationBloc = context.read<RegistrationBloc>();
     return BaseBlocListener(
       bloc: registrationBloc,
@@ -78,6 +77,11 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         } else if (listenerState
             is RegistrationStateLoadingSendingGoogleCredentials) {
           sendingCredentials = true;
+          //TODO: get the google credentials
+          registrationBloc.add(RegistrationEventGoogleRegistrationSuccess(
+              name: 'testname',
+              token: 'randnomblablablabla',
+              email: 'example@email.com'));
         } else if (listenerState is RegistrationStateRegistered) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -90,10 +94,10 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         } else if (listenerState is RegistrationStateGoogleRegistered) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (ctx) => LoginFormScreen(
-                        initialEmail: listenerState.email,
-                        initialPassword: listenerState.token,
-                        initialLoginType: LoginType.google,
+                  builder: (ctx) => LoginFormScreen.buildLoginFormScreen(
+                        email: listenerState.email,
+                        token: listenerState.token,
+                        loginType: LoginType.google,
                       )),
               (route) => false);
         } else if (listenerState is RegistrationStateGoogleCredentialsError) {
@@ -122,8 +126,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
           if (valid) {
             registrationBloc
                 .add(const RegistrationEventTriggerCredentialRegistration());
-          } else {
-            autoValidate = true;
           }
         }
       },
@@ -144,9 +146,6 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Email field
-                        const FlutterLogo(
-                          size: 96,
-                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: getProportionateScreenHeight(24)),
@@ -164,7 +163,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           child: TextFormField(
                             controller: _nameController,
                             keyboardType: TextInputType.name,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               labelText: nameTxt.tr(context),
                               border: const OutlineInputBorder(),
@@ -184,7 +184,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           child: TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               labelText: emailTxt.tr(context),
                               border: const OutlineInputBorder(),
@@ -205,7 +206,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                               vertical: getProportionateScreenHeight(24)),
                           child: TextFormField(
                             controller: _passwordController,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             obscureText: true,
                             // Hide password characters
                             decoration: InputDecoration(
@@ -226,7 +228,8 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                           child: TextFormField(
                             controller: _passwordConfirmController,
                             obscureText: true,
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             // Hide password characters
                             decoration: InputDecoration(
                               labelText: passwordConfirmationTxt.tr(context),

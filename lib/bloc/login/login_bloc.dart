@@ -35,7 +35,7 @@ class LoginBloc extends BaseBloc {
   FutureOr<void> _onLoginEventSendCredentials(
       LoginEventSendCredentials event, Emitter<BaseState> emit) async {
     await Future.delayed(Duration(seconds: 2), () {
-      emit(LoginStateLoginNotFound());
+      emit(const LoginStateLoginNotFound());
     });
     // _saveCredentials(null, LoginType.email);
   }

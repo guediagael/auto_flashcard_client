@@ -43,8 +43,10 @@ class LoginFormScreen extends StatefulWidget {
     return BlocProvider(
       create: (ctx) => LoginBloc(dataRepository: ctx.read<DataRepository>()),
       child: LoginFormScreen(
-        key: key,
-      ),
+          key: key,
+          initialEmail: email,
+          initialPassword: token,
+          initialLoginType: loginType),
     );
   }
 }
@@ -62,16 +64,24 @@ class _LoginFormState extends State<LoginFormScreen> {
     if (widget.initialEmail != null) {
       _emailController.text = widget.initialEmail!;
       _passwordController.text = widget.initialPassword!;
-      if (widget.initialLoginType == LoginType.email) {
-        context.read<RegistrationBloc>().add(LoginEventSendCredentials(
-            email: widget.initialEmail!, password: widget.initialPassword!));
-      } else {
-        context.read<RegistrationBloc>().add(LoginEventGoogleSignInSuccess(
-            email: widget.initialEmail!, token: widget.initialPassword!));
-      }
     }
 
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      debugPrint(
+          "login_form_screen::initState::addPostFrameCallback:: loginType ${widget.initialLoginType}");
+      if (widget.initialEmail != null) {
+        if (widget.initialLoginType == LoginType.email) {
+          context.read<LoginBloc>().add(LoginEventSendCredentials(
+              email: widget.initialEmail!, password: widget.initialPassword!));
+        } else {
+          context.read<LoginBloc>().add(LoginEventGoogleSignInSuccess(
+              email: widget.initialEmail!, token: widget.initialPassword!));
+        }
+      }
+      super.didChangeDependencies();
+    });
   }
 
   @override
@@ -150,6 +160,8 @@ class _LoginFormState extends State<LoginFormScreen> {
                                 vertical: getProportionateScreenHeight(24)),
                             child: TextFormField(
                               controller: _emailController,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               onEditingComplete: () {
                                 loginBloc.add(LoginEventCheckFormValidity(
                                     email: _emailController.text,
@@ -177,6 +189,8 @@ class _LoginFormState extends State<LoginFormScreen> {
                             child: TextFormField(
                               controller: _passwordController,
                               obscureText: true,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               // Hid
                               onEditingComplete: () {
                                 loginBloc.add(LoginEventCheckFormValidity(
@@ -186,7 +200,7 @@ class _LoginFormState extends State<LoginFormScreen> {
                               // e password characters
                               decoration: InputDecoration(
                                 labelText: passwordTxt.tr(context),
-                                border: OutlineInputBorder(),
+                                border: const OutlineInputBorder(),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
