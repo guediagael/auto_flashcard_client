@@ -11,7 +11,7 @@ import '../bloc/home/home_event.dart';
 import '../bloc/home/home_state.dart';
 import '../utils/messenger.dart';
 import '../utils/screen_utils.dart';
-import 'flashcard_screen.dart';
+import 'flashcard_list_screen.dart';
 import 'mcq_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
           bloc: homeBloc,
           builder: (builderCtx, builderState) {
             return (currentScreen == 0)
-                ? FlashcardScreen(
+                ? FlashcardScreen.buildFlashcardScreen(
                     key: UniqueKey(),
                   )
                 : McqScreen(

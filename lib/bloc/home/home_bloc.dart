@@ -39,6 +39,8 @@ class HomeBloc extends BaseBloc {
     }
   }
 
+
+
   FutureOr<void> _triggerDocumentUpLoading(
       HomeEventTriggerUploadLoading event, Emitter<BaseState> emit) {
     emit(DisplayFullScreenLoadingDialogState(event.documentPath));
