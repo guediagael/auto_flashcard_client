@@ -17,7 +17,7 @@ const error500 = '500';
 const error404 = '404';
 const error4041 = '4041';
 const error4091 = '4091';
-const error5001 =  '5001';
+const error5001 = '5001';
 const error5002 = '5002';
 const String duplicateAccount = 'duplicate_account';
 const registrationTxt = 'registration_txt';
@@ -27,6 +27,16 @@ const registerButton = 'register_button';
 const existingAccountPrompt = 'existing_account_prompt';
 const String nameTxt = 'name_txt';
 const String namePrompt = 'name_prompt';
+const String totalTxt = 'total_text';
+const String correctTxt = 'correct_text';
+const String totalAnsweredTxt = 'total_answered_text';
+const String mcqTxt = 'mcq_txt';
+const String flashCardTxt = 'flashcardTxt';
+const String aboutTxt = 'about_txt';
+const String privacyPolicyTxt = 'privacy_policy_txt';
+const String appDescriptionTxt = 'app_description_txt';
+const String sendFeedbackTxt = 'send_feedback_txt';
+const String openedText = 'opened_text';
 
 final Map<String, String> enUs = {
   loginTxt: 'Log in',
@@ -55,5 +65,16 @@ final Map<String, String> enUs = {
   registerButton: 'Create Account',
   existingAccountPrompt: 'You already have an account? ',
   nameTxt: 'Name',
-  namePrompt: 'Please enter your name'
+  namePrompt: 'Please enter your name',
+  totalTxt: 'Total',
+  totalAnsweredTxt: 'Answered',
+  correctTxt: 'Correct',
+  mcqTxt: 'MCQ',
+  flashCardTxt: 'Flash Card',
+  aboutTxt: 'About app',
+  privacyPolicyTxt: 'Privacy Policy',
+  appDescriptionTxt:
+      "This application is intended to help you remember the important information from your pdf. ",
+  sendFeedbackTxt: 'Send Feedback',
+  openedText: 'Opened',
 };

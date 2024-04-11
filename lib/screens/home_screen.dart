@@ -1,4 +1,7 @@
+import 'package:client/app_localization.dart';
 import 'package:client/data/data_repository.dart';
+import 'package:client/localization/en_us.dart';
+import 'package:client/screens/flashcard_list_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +14,7 @@ import '../bloc/home/home_event.dart';
 import '../bloc/home/home_state.dart';
 import '../utils/messenger.dart';
 import '../utils/screen_utils.dart';
-import 'flashcard_list_screen.dart';
+import 'mcq_list_screen.dart';
 import 'mcq_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -44,20 +47,39 @@ class HomeScreen extends StatelessWidget {
           if (listenerState is DisplayFullScreenLoadingDialogState) {
             homeBloc.add(HomeEventUploadDocument(
                 documentPath: (listenerState.nextEventObject as String)));
-          }else if (listenerState is HomeStateUploadDocumentError){
-
-          }
+          } else if (listenerState is HomeStateUploadDocumentError) {}
         },
         child: BaseBlocBuilder(
           bloc: homeBloc,
           builder: (builderCtx, builderState) {
-            return (currentScreen == 0)
-                ? FlashcardScreen.buildFlashcardScreen(
+            return DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                appBar: AppBar(
+                  bottom: TabBar(
+                    tabs: [
+                      Tab(
+                        icon: const Icon(Icons.question_mark),
+                        text: mcqTxt.tr(context),
+                      ),
+                      Tab(
+                        icon: const Icon(Icons.question_answer),
+                        text: flashCardTxt.tr(context),
+                      ),
+                    ],
+                  ),
+                  title: const Text('Auto Flashcards'),
+                ),
+                body: TabBarView(children: [
+                  McqListScreen.buildMcqCardScreen(
+                    key: UniqueKey(),
+                  ),
+                  FlashcardListScreen.buildFlashcardScreen(
                     key: UniqueKey(),
                   )
-                : McqScreen(
-                    key: UniqueKey(),
-                  );
+                ]),
+              ),
+            );
           },
         ),
       ),
@@ -81,31 +103,23 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: const Text('Flashcards'),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              title: Text(sendFeedbackTxt.tr(context)),
             ),
             ListTile(
-              title: const Text('MCQ'),
-              onTap: () {
-                Navigator.pop(context);
-              },
+              title: Text(privacyPolicyTxt.tr(context)),
             ),
-            const AboutListTile(
-              icon: Icon(
+            AboutListTile(
+              icon: const Icon(
                 Icons.info,
               ),
-              applicationIcon: Icon(
+              applicationIcon: const Icon(
                 Icons.local_play,
               ),
               applicationName: 'Auto flashcards',
               applicationVersion: '0.0.1',
               applicationLegalese: '© 2024 LTech',
-              aboutBoxChildren: [
-                ///Content goes here...
-              ],
-              child: Text('About app'),
+              aboutBoxChildren: [Text(appDescriptionTxt.tr(context))],
+              child: Text(aboutTxt.tr(context)),
             )
           ],
         ),
