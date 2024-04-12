@@ -13,18 +13,18 @@ const String errorServer = 'error_server';
 const String credentialsNotFound = 'credentials_not_found';
 const String networkError = 'network_error';
 const String googleLoginFailure = 'google_login_failure';
-const error500 = '500';
-const error404 = '404';
-const error4041 = '4041';
-const error4091 = '4091';
-const error5001 = '5001';
-const error5002 = '5002';
+const String error500 = '500';
+const String error404 = '404';
+const String error4041 = '4041';
+const String error4091 = '4091';
+const String error5001 = '5001';
+const String error5002 = '5002';
 const String duplicateAccount = 'duplicate_account';
-const registrationTxt = 'registration_txt';
-const passwordConfirmationTxt = 'password_confirmation';
-const passwordConfirmationPrompt = 'password_confirmation_prompt';
-const registerButton = 'register_button';
-const existingAccountPrompt = 'existing_account_prompt';
+const String registrationTxt = 'registration_txt';
+const String passwordConfirmationTxt = 'password_confirmation';
+const String passwordConfirmationPrompt = 'password_confirmation_prompt';
+const String registerButton = 'register_button';
+const String existingAccountPrompt = 'existing_account_prompt';
 const String nameTxt = 'name_txt';
 const String namePrompt = 'name_prompt';
 const String totalTxt = 'total_text';
@@ -37,6 +37,10 @@ const String privacyPolicyTxt = 'privacy_policy_txt';
 const String appDescriptionTxt = 'app_description_txt';
 const String sendFeedbackTxt = 'send_feedback_txt';
 const String openedText = 'opened_text';
+const String noTokenFromGoogleError = 'no_token_from_google_error';
+const String noGoogleUserError = 'no_google_user_error';
+const String passwordTooWeakError = 'password_too_weak_error';
+const String emailAlreadyInUse = 'email_already_in_use_error';
 
 final Map<String, String> enUs = {
   loginTxt: 'Log in',
@@ -77,4 +81,12 @@ final Map<String, String> enUs = {
       "This application is intended to help you remember the important information from your pdf. ",
   sendFeedbackTxt: 'Send Feedback',
   openedText: 'Opened',
+  noTokenFromGoogleError:
+      "We couldn't get the token from Google. Please try again",
+  noGoogleUserError: "We couldn't get the user from Google. Please try again",
+  passwordTooWeakError:
+      "The password is too weak. Please use at least 8 characters containing at"
+          " least one capital letter, one small letter, one digit and one "
+          "special character",
+  emailAlreadyInUse: "There is already an account with the provided email"
 };

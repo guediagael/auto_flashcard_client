@@ -49,4 +49,8 @@ class SharedPreferencesImpl with SettingsPreferences, DataPreferences {
   }
 
 
+  @override
+  void signOut() {
+    sharedPreferences.clear();
+  }
 }

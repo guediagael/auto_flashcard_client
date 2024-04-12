@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../base/base_bloc.dart';
@@ -25,32 +26,58 @@ class RegistrationBloc extends BaseBloc {
       RegistrationEventTriggerCredentialRegistration event,
       Emitter<BaseState> emit) {
     emit(const RegistrationStateLoadingSendingCredentials());
+    dataRepository.logout();
   }
 
   FutureOr<void> _onSendCredentialRegistration(
       RegistrationEventSendCredential event, Emitter<BaseState> emit) async {
-    await Future.delayed(Duration(seconds: 2), () {
-      emit(const RegistrationStateRegistered());
-    });
+    try {
+      final UserCredential credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: event.email,
+        password: event.password,
+      );
+      if (credential.user != null) {
+        emit(const RegistrationStateRegistered());
+      }else{
+        emit(RegistrationStateGoogleCredentialsError(errorMessage: '500'));
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        emit(const RegistrationStatePasswordTooWeakError());
+      } else if (e.code == 'email-already-in-use') {
+        emit(const RegistrationStateEmailAlreadyExists());
+      }
+    } catch (e) {
+      emit(RegistrationStateGoogleCredentialsError(errorMessage: e.toString()));
+    }
   }
 
   FutureOr<void> _onTriggerGoogleRegistration(
       RegistrationEventTriggerGoogleRegistration event,
-      Emitter<BaseState> emit) {
+      Emitter<BaseState> emit) async {
     emit(const RegistrationStateLoadingSendingGoogleCredentials());
+    await dataRepository.logout();
   }
 
   FutureOr<void> _onGoogleRegistrationSuccess(
       RegistrationEventGoogleRegistrationSuccess event,
-      Emitter<BaseState> emit) {
+      Emitter<BaseState> emit) async {
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: event.accessToken,
+      idToken: event.idToken,
+    );
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential);
     emit(RegistrationStateGoogleRegistered(
-        email: event.email, token: event.token));
+        email: event.email, token: event.accessToken));
   }
 
   FutureOr<void> _onGoogleRegistrationError(
       RegistrationEventGoogleRegistrationError event, Emitter<BaseState> emit) {
     emit(RegistrationStateGoogleCredentialsError(
-        errorMessage: 'just something to test'));
+        errorMessage: event.errorMessage));
   }
 
   FutureOr<void> _onCheckFormValidity(

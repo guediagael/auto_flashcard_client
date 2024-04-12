@@ -7,6 +7,7 @@ import 'package:client/data/shared_prefs/shared_preferences_impl.dart';
 import 'package:client/providers/bloc_provider.dart';
 import 'package:client/providers/data_provider.dart';
 import 'package:client/screens/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,6 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final String defaultLocale = Platform.localeName;
   String language = defaultLocale.split('_')[0];
-
   if (!AppLocalization.languages().contains(language.toLowerCase())) {
     language = 'en';
   }
@@ -27,7 +27,7 @@ void main() {
   DocDb docDb = DocDb();
   ApiImpl apiImpl = ApiImpl(
       dataPreferences: sharedPreferencesImpl, defaultLanguage: language);
-  Future.wait([sharedPreferencesImpl.init(), docDb.init()]).then((value) {
+  Future.wait([Firebase.initializeApp(),sharedPreferencesImpl.init(), docDb.init()]).then((value) {
     runApp(provideDataSources(
         sharedPreferencesImpl, docDb, apiImpl, const MyApp()));
   });

@@ -1,6 +1,7 @@
 import 'package:client/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../bloc/base/base_bloc_builder.dart';
 import '../bloc/base/base_bloc_listener.dart';
@@ -68,7 +69,13 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         passwordConfirmError = null;
         sendingCredentials = false;
 
-        if (listenerState is RegistrationStateEmailAlreadyExists) {
+        if (listenerState is RegistrationStatePasswordTooWeakError) {
+          ClientException(
+              message: passwordTooWeakError.tr(context), context: listenerCtx);
+        } else if (listenerState is RegistrationStateGoogleAuthError) {
+          ClientException(
+              message: listenerState.error.code, context: listenerCtx);
+        } else if (listenerState is RegistrationStateEmailAlreadyExists) {
           ClientException(
               message: duplicateAccount.tr(context), context: listenerCtx);
         } else if (listenerState
@@ -77,11 +84,29 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         } else if (listenerState
             is RegistrationStateLoadingSendingGoogleCredentials) {
           sendingCredentials = true;
-          //TODO: get the google credentials
-          registrationBloc.add(RegistrationEventGoogleRegistrationSuccess(
-              name: 'testname',
-              token: 'randnomblablablabla',
-              email: 'example@email.com'));
+          // Trigger the authentication flow
+          GoogleSignIn().signIn().then((googleUser) {
+            if (googleUser != null) {
+              // Obtain the auth details from the request
+              googleUser.authentication.then((googleAuth) {
+                if (googleAuth.idToken != null &&
+                    googleAuth.accessToken != null) {
+                  registrationBloc.add(
+                      RegistrationEventGoogleRegistrationSuccess(
+                          name: googleUser.displayName,
+                          email: googleUser.email,
+                          accessToken: googleAuth.accessToken!,
+                          idToken: googleAuth.idToken!));
+                } else {
+                  registrationBloc.add(RegistrationEventGoogleRegistrationError(
+                      errorMessage: noTokenFromGoogleError.tr(context)));
+                }
+              });
+            } else {
+              registrationBloc.add(RegistrationEventGoogleRegistrationError(
+                  errorMessage: noGoogleUserError.tr(context)));
+            }
+          });
         } else if (listenerState is RegistrationStateRegistered) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(

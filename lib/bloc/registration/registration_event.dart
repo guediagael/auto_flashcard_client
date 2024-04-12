@@ -25,11 +25,15 @@ class RegistrationEventTriggerGoogleRegistration extends BaseEvent {
 class RegistrationEventGoogleRegistrationSuccess extends BaseEvent {
   final String? name;
   final String email;
-  final String token;
+  final String accessToken;
+  final String idToken;
 
   RegistrationEventGoogleRegistrationSuccess(
-      {required this.name, required this.email, required this.token})
-      : super([name, email, token]);
+      {required this.name,
+      required this.email,
+      required this.accessToken,
+      required this.idToken})
+      : super([name, email, accessToken, idToken]);
 }
 
 class RegistrationEventGoogleRegistrationError extends BaseEvent {
