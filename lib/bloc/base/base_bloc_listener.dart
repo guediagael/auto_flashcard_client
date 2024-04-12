@@ -1,8 +1,8 @@
+import 'package:client/screens/login_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../screens/loading_overlay.dart';
-import '../../screens/login_screen.dart';
 import '../../utils/messenger.dart';
 import '../../utils/copyable_widget.dart';
 import 'base_bloc.dart';
@@ -55,7 +55,7 @@ class BaseBlocListener<E extends BaseEvent, S extends BaseState>
           } else if (listenerState is SendToLoginState) {
             debugPrint("base_bloc_listener Sending to Login");
             Navigator.pushNamedAndRemoveUntil(
-                context, LoginScreen.routeName, (route) => false);
+                context, LoginFormScreen.routeName, (route) => false);
           } else if (listenerState is RequestPermissionState) {
             //   TODO: request permission
           } else if (listenerState is SnackBarShortErrorState) {
@@ -65,6 +65,9 @@ class BaseBlocListener<E extends BaseEvent, S extends BaseState>
             ));
           } else if (listenerState is DisplayFullScreenLoadingDialogState) {
             Navigator.of(context).push(LoadingOverlay());
+          } else if (listenerState is FirebaseAuthErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(listenerState.errorMessage)));
           }
           listener(context, listenerState);
         });

@@ -1,4 +1,6 @@
 import 'package:client/bloc/base/base_event.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginEventTriggerCredentialsLogin extends BaseEvent {
   final String email;
@@ -22,11 +24,10 @@ class LoginEventTriggerGoogleLogin extends BaseEvent {
 }
 
 class LoginEventGoogleSignInSuccess extends BaseEvent {
-  final String email;
-  final String token;
+  final GoogleSignInAuthentication googleSignInAuthentication;
 
-  LoginEventGoogleSignInSuccess({required this.email, required this.token})
-      : super([email, token]);
+  LoginEventGoogleSignInSuccess({required this.googleSignInAuthentication})
+      : super([googleSignInAuthentication]);
 }
 
 class LoginEventTriggerGoogleSignInFailure extends BaseEvent {

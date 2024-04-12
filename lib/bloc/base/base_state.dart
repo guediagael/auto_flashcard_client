@@ -87,3 +87,8 @@ class DisplayFullScreenLoadingDialogState extends CommonState {
   DisplayFullScreenLoadingDialogState(this.nextEventObject)
       : super([nextEventObject]);
 }
+
+class FirebaseAuthErrorState extends CommonState {
+  final String errorMessage;
+  FirebaseAuthErrorState(this.errorMessage):super([errorMessage]);
+}

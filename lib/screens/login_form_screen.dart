@@ -1,8 +1,9 @@
 import 'package:client/app_localization.dart';
-import 'package:client/bloc/registration/registration_bloc.dart';
 import 'package:client/screens/registration_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../bloc/base/base_bloc_builder.dart';
 import '../bloc/base/base_bloc_listener.dart';
@@ -20,34 +21,52 @@ import '../widgets/custom_elevated_button.dart';
 import 'home_screen.dart';
 
 class LoginFormScreen extends StatefulWidget {
-  final String? initialEmail, initialPassword;
-  final LoginType? initialLoginType;
+  static String routeName = "login";
 
-  const LoginFormScreen(
+  final String? initialEmail, initialPassword;
+  final UserCredential? userCredential;
+
+  LoginType? initialLoginType;
+
+  LoginFormScreen(
       {super.key,
       this.initialEmail,
       this.initialPassword,
-      this.initialLoginType})
-      : assert(((initialEmail == null) &&
-                (initialPassword == null) &&
-                (initialLoginType == null)) ||
-            ((initialEmail != null) &&
-                (initialPassword != null) &&
-                (initialLoginType != null)));
+      this.userCredential}) {
+    if (userCredential != null) {
+      initialLoginType = LoginType.google;
+    } else if (initialPassword != null) {
+      initialLoginType = LoginType.email;
+    } else {}
+    initialLoginType = null;
+  }
 
   @override
   State<LoginFormScreen> createState() => _LoginFormState();
 
   static Widget buildLoginFormScreen(
-      {Key? key, String? email, String? token, LoginType? loginType}) {
+      {Key? key,
+      String? email,
+      String? token,
+      UserCredential? userCredential,}) {
     return BlocProvider(
       create: (ctx) => LoginBloc(dataRepository: ctx.read<DataRepository>()),
       child: LoginFormScreen(
           key: key,
           initialEmail: email,
           initialPassword: token,
-          initialLoginType: loginType),
+          userCredential: userCredential),
     );
+  }
+
+  static Widget buildLoginFormScreenAfterPasswordRegistration(
+      {Key? key, required String email, required String token}) {
+    return buildLoginFormScreen(key: key, email: email, token: token);
+  }
+
+  static Widget buildLoginFormScreenAfterGoogleRegistration(
+      {Key? key, required UserCredential userCredential}) {
+    return buildLoginFormScreen(key: key, userCredential: userCredential);
   }
 }
 
@@ -65,20 +84,17 @@ class _LoginFormState extends State<LoginFormScreen> {
       _emailController.text = widget.initialEmail!;
       _passwordController.text = widget.initialPassword!;
     }
-
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       debugPrint(
           "login_form_screen::initState::addPostFrameCallback:: loginType ${widget.initialLoginType}");
-      if (widget.initialEmail != null) {
-        if (widget.initialLoginType == LoginType.email) {
-          context.read<LoginBloc>().add(LoginEventSendCredentials(
-              email: widget.initialEmail!, password: widget.initialPassword!));
-        } else {
-          context.read<LoginBloc>().add(LoginEventGoogleSignInSuccess(
-              email: widget.initialEmail!, token: widget.initialPassword!));
-        }
+      if (widget.initialLoginType == LoginType.email) {
+        context.read<LoginBloc>().add(LoginEventSendCredentials(
+            email: widget.initialEmail!, password: widget.initialPassword!));
+      } else if(widget.initialLoginType == LoginType.google) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => HomeScreen.buildHomeScreen()),
+            (route) => false);
       }
       super.didChangeDependencies();
     });
@@ -98,26 +114,36 @@ class _LoginFormState extends State<LoginFormScreen> {
         emailError = null;
         passwordError = null;
         sendingCredentials = false;
-        if (listenerState is LoginStateLoginNotFound) {
+        if (listenerState is LoginStateWrongCredentials) {
+          ClientException(
+              message: credentialsNotFound.tr(context), context: listenerCtx);
+        } else if (listenerState is LoginStateLoginNotFound) {
           ScaffoldMessenger.of(listenerCtx).showSnackBar(
               SnackBar(content: Text(credentialsNotFound.tr(listenerCtx))));
         } else if (listenerState is LoginStateLoadingSendingCredentials) {
           sendingCredentials = true;
-
           loginBloc.add(LoginEventSendCredentials(
               email: _emailController.text,
               password: _passwordController.text));
         } else if (listenerState is LoginStateLoadingSendingGoogleCredentials) {
           sendingCredentials = true;
-          loginBloc.add(LoginEventTriggerGoogleSignInFailure(
-              errorMessage: "Invalid credentials")); //TODO: intl
+          GoogleSignIn().signIn().then((googleUser) {
+            if (googleUser != null) {
+              // Obtain the auth details from the request
+              googleUser.authentication.then((googleAuth) {
+                loginBloc.add(LoginEventGoogleSignInSuccess(
+                    googleSignInAuthentication: googleAuth));
+              });
+            }
+          });
         } else if (listenerState is LoginStateLoggedIn) {
           Navigator.of(listenerCtx).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => HomeScreen.buildHomeScreen()),
               (route) => false);
         } else if (listenerState is LoginStateGoogleCredentialsError) {
           ClientException(
-              message: listenerState.errorMessage, context: listenerCtx);
+              message: listenerState.errorMessage.tr(context),
+              context: listenerCtx);
         } else if (listenerState is LoginStateFormValidityCheck) {
           emailError = listenerState.emailError;
           passwordError = listenerState.passwordError;

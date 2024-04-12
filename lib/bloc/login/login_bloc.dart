@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:client/localization/en_us.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../data/shared_prefs/data_preferences.dart';
 import '../base/base_bloc.dart';
@@ -29,26 +33,75 @@ class LoginBloc extends BaseBloc {
 
   FutureOr<void> _onLoginEventTriggerCredentials(
       LoginEventTriggerCredentialsLogin event, Emitter<BaseState> emit) async {
-    emit(LoginStateLoadingSendingCredentials());
+    emit(const LoginStateLoadingSendingCredentials());
   }
 
   FutureOr<void> _onLoginEventSendCredentials(
       LoginEventSendCredentials event, Emitter<BaseState> emit) async {
-    await Future.delayed(Duration(seconds: 2), () {
-      emit(const LoginStateLoginNotFound());
-    });
-    // _saveCredentials(null, LoginType.email);
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: event.email, password: event.password);
+      if (credential.user != null) {
+        emit(const LoginStateLoggedIn());
+      } else {
+        debugPrint(
+            "login_bloc::_onLoginEventSendCredentials>> Login not found");
+        emit(const LoginStateLoginNotFound());
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint(
+          "login_block::_onLoginEventSendCredentials::FirebaseAuthException $e");
+      if (e.code == 'account-exists-with-different-credential') {
+        emit(LoginStateGoogleCredentialsError(
+            errorMessage: accountCreateWithGoogleError));
+      } else if (e.code == 'user-not-found') {
+        debugPrint('login_bloc::_onLoginEventSendCredentials>> '
+            'No user found for that email.');
+        emit(const LoginStateLoginNotFound());
+      } else if (e.code == 'wrong-password') {
+        debugPrint('login_bloc::_onLoginEventSendCredentials>> '
+            'Wrong password provided for that user.');
+        emit(const LoginStateWrongCredentials());
+      } else {
+        emit(FirebaseAuthErrorState(e.code));
+      }
+    }
   }
 
   FutureOr<void> _onLoginEventTriggerGoogle(
-      LoginEventTriggerGoogleLogin event, Emitter<BaseState> emit) {
+      LoginEventTriggerGoogleLogin event, Emitter<BaseState> emit) async {
     emit(const LoginStateLoadingSendingGoogleCredentials());
+
   }
 
   FutureOr<void> _onLoginEventGoogleSignInSuccess(
-      LoginEventGoogleSignInSuccess event, Emitter<BaseState> emit) {
-    // _saveCredentials(null, LoginType.google);
-    emit(const LoginStateLoggedIn());
+      LoginEventGoogleSignInSuccess event, Emitter<BaseState> emit) async{
+    try {
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: event.googleSignInAuthentication.accessToken,
+        idToken: event.googleSignInAuthentication.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      if (userCredential.user != null) {
+        emit(const LoginStateLoggedIn());
+      } else {
+        emit(LoginStateGoogleCredentialsError(
+            errorMessage: credentialsNotFound));
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint(
+          "login_block::_onLoginEventTriggerGoogle::FirebaseAuthException $e");
+      if (e.code == 'account-exists-with-different-credential') {
+        emit(LoginStateGoogleCredentialsError(
+            errorMessage: accountCreatedWithPasswordError));
+      } else {
+        emit(FirebaseAuthErrorState(e.code));
+      }
+    }
   }
 
   FutureOr<void> _onLoginEventGoogleSignInFailure(

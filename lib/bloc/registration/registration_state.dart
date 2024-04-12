@@ -1,5 +1,6 @@
 import 'package:client/bloc/base/base_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class RegistrationStateInitial extends BaseState {
   const RegistrationStateInitial() : super(const []);
@@ -25,10 +26,10 @@ class RegistrationStateRegistered extends BaseState {
 }
 
 class RegistrationStateGoogleRegistered extends BaseState {
-  final String email, token;
+  final UserCredential userCredential;
 
-  RegistrationStateGoogleRegistered({required this.email, required this.token})
-      : super([email, token]);
+  RegistrationStateGoogleRegistered({required this.userCredential})
+      : super([userCredential]);
 }
 
 class RegistrationStateGoogleCredentialsError extends BaseState {

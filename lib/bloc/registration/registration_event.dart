@@ -1,4 +1,5 @@
 import 'package:client/bloc/base/base_event.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class RegistrationEventTriggerCredentialRegistration extends BaseEvent {
   const RegistrationEventTriggerCredentialRegistration() : super(const []);
@@ -23,17 +24,11 @@ class RegistrationEventTriggerGoogleRegistration extends BaseEvent {
 }
 
 class RegistrationEventGoogleRegistrationSuccess extends BaseEvent {
-  final String? name;
-  final String email;
-  final String accessToken;
-  final String idToken;
+  final GoogleSignInAuthentication googleAuth;
 
   RegistrationEventGoogleRegistrationSuccess(
-      {required this.name,
-      required this.email,
-      required this.accessToken,
-      required this.idToken})
-      : super([name, email, accessToken, idToken]);
+      {required this.googleAuth})
+      : super([googleAuth]);
 }
 
 class RegistrationEventGoogleRegistrationError extends BaseEvent {

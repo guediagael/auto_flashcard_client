@@ -27,6 +27,10 @@ class LoginStateGoogleCredentialsError extends BaseState {
       : super([errorMessage]);
 }
 
+class LoginStateWrongCredentials extends BaseState {
+  const LoginStateWrongCredentials() : super(const []);
+}
+
 class LoginStateFormValidityCheck extends BaseState {
   final String? emailError;
   final String? passwordError;

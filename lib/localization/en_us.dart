@@ -7,6 +7,7 @@ const String emailPrompt = 'email_prompt';
 const String passwordPrompt = 'password_prompt';
 const String loginButton = 'login_btn';
 const String socialLoginPrompt = 'social_login_prompt';
+const String socialRegistrationPrompt = 'social_registration_prompt';
 const String noAccountPrompt = 'no_account_prompt';
 const String signUpText = 'signup_txt';
 const String errorServer = 'error_server';
@@ -41,6 +42,8 @@ const String noTokenFromGoogleError = 'no_token_from_google_error';
 const String noGoogleUserError = 'no_google_user_error';
 const String passwordTooWeakError = 'password_too_weak_error';
 const String emailAlreadyInUse = 'email_already_in_use_error';
+const String accountCreateWithGoogleError = 'account_create_with_google_error';
+const String accountCreatedWithPasswordError = 'account_created_with_password_error';
 
 final Map<String, String> enUs = {
   loginTxt: 'Log in',
@@ -50,6 +53,7 @@ final Map<String, String> enUs = {
   passwordPrompt: 'Please enter your password',
   loginButton: 'Login',
   socialLoginPrompt: 'Log in with: ',
+  socialRegistrationPrompt: 'Register in with',
   noAccountPrompt: 'No account? ',
   signUpText: 'Sign up',
   errorServer: 'Server error',
@@ -88,5 +92,7 @@ final Map<String, String> enUs = {
       "The password is too weak. Please use at least 8 characters containing at"
           " least one capital letter, one small letter, one digit and one "
           "special character",
-  emailAlreadyInUse: "There is already an account with the provided email"
+  emailAlreadyInUse: "There is already an account with the provided email",
+  accountCreatedWithPasswordError: "Account exists with password",
+  accountCreateWithGoogleError: "Account exists with Google Login"
 };

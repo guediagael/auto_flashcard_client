@@ -11,7 +11,6 @@ import '../bloc/registration/registration_state.dart';
 import '../constants/assets.dart';
 import '../core/errors/exceptions.dart';
 import '../data/data_repository.dart';
-import '../data/shared_prefs/data_preferences.dart';
 import '../localization/en_us.dart';
 import '../utils/messenger.dart';
 import '../utils/screen_utils.dart';
@@ -98,10 +97,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                     googleAuth.accessToken != null) {
                   registrationBloc.add(
                       RegistrationEventGoogleRegistrationSuccess(
-                          name: googleUser.displayName,
-                          email: googleUser.email,
-                          accessToken: googleAuth.accessToken!,
-                          idToken: googleAuth.idToken!));
+                          googleAuth: googleAuth));
                 } else {
                   registrationBloc.add(RegistrationEventGoogleRegistrationError(
                       errorMessage: noTokenFromGoogleError.tr(context)));
@@ -115,19 +111,17 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         } else if (listenerState is RegistrationStateRegistered) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (ctx) => LoginFormScreen.buildLoginFormScreen(
-                        email: _emailController.text,
-                        token: _passwordController.text,
-                        loginType: LoginType.email,
-                      )),
+                  builder: (ctx) => LoginFormScreen
+                      .buildLoginFormScreenAfterPasswordRegistration(
+                          email: _emailController.text,
+                          token: _passwordController.text)),
               (route) => false);
         } else if (listenerState is RegistrationStateGoogleRegistered) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (ctx) => LoginFormScreen.buildLoginFormScreen(
-                        email: listenerState.email,
-                        token: listenerState.token,
-                        loginType: LoginType.google,
+                  builder: (ctx) => LoginFormScreen
+                          .buildLoginFormScreenAfterGoogleRegistration(
+                        userCredential: listenerState.userCredential,
                       )),
               (route) => false);
         } else if (listenerState is RegistrationStateGoogleCredentialsError) {
@@ -317,7 +311,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                socialLoginPrompt.tr(context),
+                                socialRegistrationPrompt.tr(context),
                               ),
                               Padding(
                                   padding: EdgeInsets.only(

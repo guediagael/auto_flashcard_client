@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../base/base_bloc.dart';
 import '../base/base_state.dart';
@@ -69,13 +70,15 @@ class RegistrationBloc extends BaseBloc {
       Emitter<BaseState> emit) async {
     // Create a new credential
     final credential = GoogleAuthProvider.credential(
-      accessToken: event.accessToken,
-      idToken: event.idToken,
+      accessToken: event.googleAuth.accessToken,
+      idToken: event.googleAuth.idToken,
     );
+
     // Once signed in, return the UserCredential
-    await FirebaseAuth.instance.signInWithCredential(credential);
-    emit(RegistrationStateGoogleRegistered(
-        email: event.email, token: event.accessToken));
+    UserCredential googleAuth =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    emit(RegistrationStateGoogleRegistered(userCredential: googleAuth));
   }
 
   FutureOr<void> _onGoogleRegistrationError(
