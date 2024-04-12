@@ -38,8 +38,12 @@ class RegistrationBloc extends BaseBloc {
         password: event.password,
       );
       if (credential.user != null) {
-        emit(const RegistrationStateRegistered());
-      }else{
+        emit(RegistrationStateRegistered(
+            email: event.email,
+            name: credential.user?.displayName ??
+                credential.additionalUserInfo?.username ??
+                ""));
+      } else {
         emit(RegistrationStateGoogleCredentialsError(errorMessage: '500'));
       }
     } on FirebaseAuthException catch (e) {

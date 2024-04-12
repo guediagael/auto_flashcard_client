@@ -81,6 +81,11 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         } else if (listenerState
             is RegistrationStateLoadingSendingCredentials) {
           sendingCredentials = true;
+          registrationBloc.add(RegistrationEventSendCredential(
+              name: _nameController.text,
+              email: _emailController.text,
+              password: _passwordController.text,
+              passwordConfirmation: _passwordController.text));
         } else if (listenerState
             is RegistrationStateLoadingSendingGoogleCredentials) {
           sendingCredentials = true;
@@ -110,10 +115,10 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
         } else if (listenerState is RegistrationStateRegistered) {
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
-                  builder: (ctx) => LoginFormScreen(
-                        initialEmail: _emailController.text,
-                        initialPassword: _passwordController.text,
-                        initialLoginType: LoginType.email,
+                  builder: (ctx) => LoginFormScreen.buildLoginFormScreen(
+                        email: _emailController.text,
+                        token: _passwordController.text,
+                        loginType: LoginType.email,
                       )),
               (route) => false);
         } else if (listenerState is RegistrationStateGoogleRegistered) {
@@ -302,7 +307,7 @@ class _RegistrationFormScreenState extends State<RegistrationFormScreen> {
                                                       .text));
                                     }
                                   },
-                            text: loginButton.tr(context),
+                            text: registerButton.tr(context),
                           ),
                         ),
                         Padding(

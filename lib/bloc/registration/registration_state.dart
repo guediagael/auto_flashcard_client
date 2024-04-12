@@ -18,7 +18,10 @@ class RegistrationStateLoadingSendingGoogleCredentials extends BaseState {
 }
 
 class RegistrationStateRegistered extends BaseState {
-  const RegistrationStateRegistered() : super(const []);
+  final String email, name;
+
+  RegistrationStateRegistered({required this.email, required this.name})
+      : super([email, name]);
 }
 
 class RegistrationStateGoogleRegistered extends BaseState {
